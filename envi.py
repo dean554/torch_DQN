@@ -26,8 +26,8 @@ class envirn:
 
         self.state += np.random.uniform(-0.8, 0.8)
 
-        terminate = np.bool(self.state < self.min_x or self.state > self.max_x)
-        truncated = np.bool(self.current_step > self.max_step)
+        terminate = bool(self.state < self.min_x or self.state > self.max_x)
+        truncated = bool(self.current_step > self.max_step)
 
         reward = 0.0 if terminate else 1.0
 
