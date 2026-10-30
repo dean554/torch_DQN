@@ -34,8 +34,8 @@ class s_env:
         self.snake_width = snake_fruit_width
         self.snake_height = snake_fruit_height
 
-        self.state1 = self.snake_x
-        self.state2 = self.snake_y
+        self.snake_body = [(self.snake_x, self.snake_y)]
+        self.snake_length = 1
 
         self.fruit_x = fruit_x
         self.fruit_y = fruit_y
@@ -51,9 +51,11 @@ class s_env:
         self.r_eward = 0
 
     def snake_and_fruit(self):
-        rec1 = pygame.Rect(self.snake_x, self.snake_y, self.snake_width, self.snake_height)
+        for segment in self.snake_body:
+            rec = pygame.Rect(segment[0], segment[1], self.snake_width, self.snake_height)
+            pygame.draw.rect(self.screen, GREEN, rec)
+
         fru1 = pygame.Rect(self.fruit_x, self.fruit_y, self.fruit_width, self.fruit_height)
-        pygame.draw.rect(self.screen, GREEN, rec1)
         pygame.draw.rect(self.screen, RED, fru1)
 
 
@@ -76,22 +78,36 @@ class s_env:
             return 1.0 # Return reward only when eaten
         return 0.0
 
-    def _get_state(self):
-        dx = (self.fruit_x - self.snake_x) / WIDTH
-        dy = (self.fruit_y - self.snake_y) / HEIGHT
-        sx = self.snake_x / WIDTH
-        sy = self.snake_y / HEIGHT
+    def _blocked(self, dx, dy):
+        nx, ny = self.snake_x + dx, self.snake_y + dy
+        if nx < 0 or nx > WIDTH - self.snake_width or ny < 0 or ny > HEIGHT - self.snake_height:
+            return 1.0
+        if (nx, ny) in self.snake_body[1:]:
+            return 1.0
+        return 0.0
 
-        wall_left   = self.snake_x / WIDTH
-        wall_right  = (WIDTH - self.snake_x - self.snake_width) / WIDTH
-        wall_top    = self.snake_y / HEIGHT
-        wall_bottom = (HEIGHT - self.snake_y - self.snake_height) / HEIGHT
-        
-        return np.array([dx, dy, sx, sy, wall_left, wall_right, wall_top, wall_bottom], dtype=np.float32)
-        
+    def _get_state(self):
+        danger = [self._blocked(10, 0), self._blocked(-10, 0),
+                self._blocked(0, 10), self._blocked(0, -10)]          # right, left, down, up
+        heading = [float(self.dx == 10), float(self.dx == -10),
+                float(self.dy == 10), float(self.dy == -10)]
+        fruit_dir = [float(self.fruit_x < self.snake_x), float(self.fruit_x > self.snake_x),
+                    float(self.fruit_y < self.snake_y), float(self.fruit_y > self.snake_y)]
+        return np.array(danger + heading + fruit_dir, dtype=np.float32)
+
+    def self_collide(self):
+        # Check if the head's coordinates match any other segment in the body
+        if (self.snake_x, self.snake_y) in self.snake_body[1:]:
+            return True
+        return False
+    
     def reset(self):
         self.current_steps = 0
+        self.dx, self.dy = 10, 0
         self.snake_x, self.snake_y = SNAKE_X, SNAKE_Y
+
+        self.snake_body = [(self.snake_x, self.snake_y)]
+        self.snake_length = 1
 
         while True:
             self.fruit_x = random.randrange(0, WIDTH - self.fruit_width, 10)
@@ -116,16 +132,16 @@ class s_env:
 
         self.fruit_collid()
             
-        if action == 0:
+        if action == 0 and self.dx != -10:
             self.dx = 10
             self.dy = 0
-        elif action == 1:
+        elif action == 1 and self.dx != 10:
             self.dx = -10
             self.dy = 0
-        elif action == 2:
+        elif action == 2 and self.dy != -10:
             self.dx = 0
             self.dy = 10
-        elif action == 3:
+        elif action == 3 and self.dy != 10:
             self.dx = 0
             self.dy = -10
 
@@ -134,18 +150,35 @@ class s_env:
         # Continually move the snake by adding the current direction values
         self.snake_x += self.dx
         self.snake_y += self.dy
-        self.state1 = self.snake_x
-        self.state2 = self.snake_y
+
+        #add head position to the body list
+        self.snake_body.insert(0, (self.snake_x, self.snake_y))
 
         step_reward = self.fruit_collid()
-        terminate = bool(self.wall_collid())
+
+        # If fruit was eaten, increase the target length
+        if step_reward > 0:
+            self.snake_length += 1
+            
+        # Remove the tail if the body is longer than the target length
+        if len(self.snake_body) > self.snake_length:
+            self.snake_body.pop()
+
+        terminate = bool(self.wall_collid() or self.self_collide())
 
         observation = self._get_state()
 
+        prev_dist = abs(self.fruit_x - self.snake_x) + abs(self.fruit_y - self.snake_y)
+# ... move, collisions ...
+        new_dist = abs(self.fruit_x - self.snake_x) + abs(self.fruit_y - self.snake_y)
+
         if terminate:
             reward = -1.0
-        else:
+        elif step_reward > 0:
             reward = step_reward
+        else:
+            reward = 0.05 if new_dist < prev_dist else -0.05
+
         truncated =  bool(self.current_steps > self.max_steps)
         
         self.clock.tick(600)
