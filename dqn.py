@@ -15,7 +15,7 @@ import torch.optim as optim
 is_ipython = 'inline' in matplotlib.get_backend()
 
 if is_ipython:
-    from IPython import display
+    from IPython import display #type: ignore
 
 device = torch.device(
     'cuda' if torch.cuda.is_available() else
