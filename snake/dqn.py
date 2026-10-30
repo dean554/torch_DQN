@@ -127,7 +127,7 @@ def optimize_model():
 if torch.cuda.is_available() or torch.backends.mps.is_available():
     num_episodes = 60000
 else:
-    num_episodes = 2000
+    num_episodes = 200
 
 for i_episode in range(num_episodes):
     # Initialize the environment and get its state
@@ -164,7 +164,8 @@ for i_episode in range(num_episodes):
         target_net.load_state_dict(target_net_state_dict)
 
         if done:
-
+            torch.save(policy_net.state_dict(), "snake_dqn.pth")
+            print("Model saved to snake_dqn.pth")
             break
 
 print('Complete')

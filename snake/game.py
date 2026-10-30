@@ -46,7 +46,7 @@ class s_env:
         self.dy = 0
 
         self.current_steps = 0
-        self.max_steps = 200
+        self.max_steps = 2000
 
         self.r_eward = 0
 
