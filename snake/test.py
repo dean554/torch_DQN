@@ -9,17 +9,17 @@ import torch.nn.functional as F
 from game import s_env
 
 MODEL_PATH = sys.argv[1] if len(sys.argv) > 1 else "snake/snake_dqn.pth"
-N_EPISODES = 2000          # how many games to play
-STEP_DELAY = 0.01        # seconds between moves, so you can watch (0 = max speed)
+N_EPISODES = 2000 # how many games to play
+STEP_DELAY = 0.04 # seconds between moves
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class DQN(nn.Module):
     def __init__(self, n_observations, n_actions):
         super(DQN, self).__init__()
-        self.l1 = nn.Linear(n_observations, 128)
-        self.l2 = nn.Linear(128, 128)
-        self.l3 = nn.Linear(128, n_actions)
+        self.l1 = nn.Linear(n_observations, 256)
+        self.l2 = nn.Linear(256, 256)
+        self.l3 = nn.Linear(256, n_actions)
 
     def forward(self, x):
         x = F.relu(self.l1(x))

@@ -30,9 +30,9 @@ class ReplayMemory(object):
 class DQN(nn.Module):
     def __init__(self, n_observations, n_actions):
         super(DQN, self).__init__()
-        self.l1  = nn.Linear(n_observations, 128)
-        self.l2  = nn.Linear(128, 128)
-        self.l3  = nn.Linear(128, n_actions)
+        self.l1  = nn.Linear(n_observations, 256)
+        self.l2  = nn.Linear(256, 256)
+        self.l3  = nn.Linear(256, n_actions)
 
     def forward(self, x):
         x = F.relu(self.l1(x))
@@ -127,7 +127,7 @@ def optimize_model():
 if torch.cuda.is_available() or torch.backends.mps.is_available():
     num_episodes = 60000
 else:
-    num_episodes = 200
+    num_episodes = 2000
 
 for i_episode in range(num_episodes):
     # Initialize the environment and get its state
@@ -165,7 +165,7 @@ for i_episode in range(num_episodes):
 
         if done:
             torch.save(policy_net.state_dict(), "snake_dqn.pth")
-            print("Model saved to snake_dqn.pth")
+            print(f"Model saved to snake_dqn.pth. {reward}")
             break
 
 print('Complete')

@@ -169,7 +169,6 @@ class s_env:
         observation = self._get_state()
 
         prev_dist = abs(self.fruit_x - self.snake_x) + abs(self.fruit_y - self.snake_y)
-# ... move, collisions ...
         new_dist = abs(self.fruit_x - self.snake_x) + abs(self.fruit_y - self.snake_y)
 
         if terminate:
@@ -180,8 +179,8 @@ class s_env:
             reward = 0.05 if new_dist < prev_dist else -0.05
 
         truncated =  bool(self.current_steps > self.max_steps)
-        
-        self.clock.tick(600)
+
+        self.clock.tick(1000)
             
         return observation, reward, terminate, truncated
 
