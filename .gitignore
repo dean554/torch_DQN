@@ -4,3 +4,4 @@ enviv2.py
 snake/a.py
 .pth
 .vscode
+snake/snake_dqn.pth

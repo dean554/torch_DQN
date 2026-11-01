@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 from game import s_env
 
-MODEL_PATH = sys.argv[1] if len(sys.argv) > 1 else "snake/snake_dqn.pth"
+MODEL_PATH = sys.argv[1] if len(sys.argv) > 1 else "snake_dqn.pth"
 N_EPISODES = 2000 # how many games to play
 STEP_DELAY = 0.04 # seconds between moves
 
