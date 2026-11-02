@@ -7,8 +7,8 @@ import os
 
 pygame.init()
 
-WIDTH = 500
-HEIGHT = 500
+WIDTH = 480
+HEIGHT = 480
 
 #colors
 BLACK = 0
@@ -73,8 +73,8 @@ class s_env:
 
         if snake_rect.colliderect(fruit_rect):
             while True:
-                self.fruit_x = random.randrange(0, WIDTH - self.fruit_width, 20)
-                self.fruit_y = random.randrange(0, HEIGHT - self.fruit_height, 20)
+                self.fruit_x = random.randrange(0, WIDTH, 20)
+                self.fruit_y = random.randrange(0, HEIGHT, 20)
                 #keep generating until find a spot not occupied by the snake
                 if (self.fruit_x, self.fruit_y) not in self.snake_body:
                     break
@@ -135,7 +135,7 @@ class s_env:
 
         pygame.display.flip()
 
-        self.fruit_collid()
+        prev_dist = abs(self.fruit_x - self.snake_x) + abs(self.fruit_y - self.snake_y)
             
         if action == 0 and self.dx != -20:
             self.dx = 20
@@ -173,15 +173,15 @@ class s_env:
 
         observation = self._get_state()
 
-        prev_dist = abs(self.fruit_x - self.snake_x) + abs(self.fruit_y - self.snake_y)
         new_dist = abs(self.fruit_x - self.snake_x) + abs(self.fruit_y - self.snake_y)
 
+
         if terminate:
-            reward = -1.0
+            reward = -10.0
         elif step_reward > 0:
-            reward = step_reward
+            reward = 10.0
         else:
-            reward = 0.05 if new_dist < prev_dist else -0.05
+            reward = 0.1 if new_dist < prev_dist else -0.15
 
         truncated =  bool(self.current_steps > self.max_steps)
 

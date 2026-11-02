@@ -28,7 +28,7 @@ class DQN(nn.Module):
 
 
 # Same start positions and sizes as in training
-WIDTH, HEIGHT = 500, 500
+WIDTH, HEIGHT = 480, 480
 SNAKE_X, SNAKE_Y = WIDTH // 2, HEIGHT // 2
 FRUIT_X, FRUIT_Y = (WIDTH // 2) + 100, (HEIGHT // 2) + 50
 SIZE = 20

@@ -30,9 +30,9 @@ class ReplayMemory(object):
 class DQN(nn.Module):
     def __init__(self, n_observations, n_actions):
         super(DQN, self).__init__()
-        self.l1  = nn.Linear(n_observations, 256)
-        self.l2  = nn.Linear(256, 256)
-        self.l3  = nn.Linear(256, n_actions)
+        self.l1  = nn.Linear(n_observations, 128)
+        self.l2  = nn.Linear(128, 128)
+        self.l3  = nn.Linear(128, n_actions)
 
     def forward(self, x):
         x = F.relu(self.l1(x))
@@ -43,13 +43,13 @@ BATCH_SIZE = 128
 GAMMA = 0.99
 EPS_START = 0.9
 EPS_END = 0.01
-EPS_DECAY = 2500
-TAU = 0.001
-LR = 1e-3
+EPS_DECAY = 30000
+TAU = 0.005
+LR = 1e-4
 
 #snake and fruit start
-WIDTH = 500
-HEIGHT = 500
+WIDTH = 480
+HEIGHT = 480
 SNAKE_X , SNAKE_Y = WIDTH//2, HEIGHT//2
 FRUIT_X , FRUIT_Y = (WIDTH//2) + 100, (HEIGHT//2) + 50
 
@@ -63,7 +63,7 @@ state = env.reset()
 n_state = len(state)
 n_actions = 4
 
-memory = ReplayMemory(10000)
+memory = ReplayMemory(50000)
 
 policy_net = DQN(n_state, n_actions).to(device)
 target_net = DQN(n_state, n_actions).to(device)
