@@ -164,8 +164,8 @@ for i_episode in range(num_episodes):
         target_net.load_state_dict(target_net_state_dict)
 
         if done:
-            torch.save(policy_net.state_dict(), "snake_dqn.pth")
-            print(f"Model saved to snake_dqn.pth. {reward}")
             break
 
+torch.save(policy_net.state_dict(), "snake_dqn.pth")
+print(f"Model saved to snake_dqn.pth. {reward}")
 print('Complete')

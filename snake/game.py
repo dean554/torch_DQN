@@ -72,8 +72,12 @@ class s_env:
         fruit_rect = pygame.Rect(self.fruit_x, self.fruit_y, self.fruit_width, self.fruit_height)
 
         if snake_rect.colliderect(fruit_rect):
-            self.fruit_x = random.randrange(0, WIDTH - self.fruit_width, 20)
-            self.fruit_y = random.randrange(0, HEIGHT - self.fruit_height, 20)
+            while True:
+                self.fruit_x = random.randrange(0, WIDTH - self.fruit_width, 20)
+                self.fruit_y = random.randrange(0, HEIGHT - self.fruit_height, 20)
+                #keep generating until find a spot not occupied by the snake
+                if (self.fruit_x, self.fruit_y) not in self.snake_body:
+                    break
 
             return 1.0 # Return reward only when eaten
         return 0.0
@@ -102,6 +106,7 @@ class s_env:
         return False
     
     def reset(self):
+        print(f"Reward: {self.r_eward:.4f}")
         self.current_steps = 0
         self.dx, self.dy = 20, 0
         self.snake_x, self.snake_y = SNAKE_X, SNAKE_Y
@@ -179,6 +184,8 @@ class s_env:
             reward = 0.05 if new_dist < prev_dist else -0.05
 
         truncated =  bool(self.current_steps > self.max_steps)
+
+        self.r_eward += reward
 
         self.clock.tick(1000)
             
