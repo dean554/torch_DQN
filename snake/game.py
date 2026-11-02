@@ -42,7 +42,7 @@ class s_env:
         self.fruit_width = snake_fruit_width
         self.fruit_height = snake_fruit_height
 
-        self.dx = 10 
+        self.dx = 20 
         self.dy = 0
 
         self.current_steps = 0
@@ -87,10 +87,10 @@ class s_env:
         return 0.0
 
     def _get_state(self):
-        danger = [self._blocked(10, 0), self._blocked(-10, 0),
-                self._blocked(0, 10), self._blocked(0, -10)]          # right, left, down, up
-        heading = [float(self.dx == 10), float(self.dx == -10),
-                float(self.dy == 10), float(self.dy == -10)]
+        danger = [self._blocked(20, 0), self._blocked(-20, 0),
+                self._blocked(0, 20), self._blocked(0, -20)]          # right, left, down, up
+        heading = [float(self.dx == 20), float(self.dx == -20),
+                float(self.dy == 20), float(self.dy == -20)]
         fruit_dir = [float(self.fruit_x < self.snake_x), float(self.fruit_x > self.snake_x),
                     float(self.fruit_y < self.snake_y), float(self.fruit_y > self.snake_y)]
         return np.array(danger + heading + fruit_dir, dtype=np.float32)
@@ -103,15 +103,15 @@ class s_env:
     
     def reset(self):
         self.current_steps = 0
-        self.dx, self.dy = 10, 0
+        self.dx, self.dy = 20, 0
         self.snake_x, self.snake_y = SNAKE_X, SNAKE_Y
 
         self.snake_body = [(self.snake_x, self.snake_y)]
         self.snake_length = 1
 
         while True:
-            self.fruit_x = random.randrange(0, WIDTH - self.fruit_width, 10)
-            self.fruit_y = random.randrange(0, HEIGHT - self.fruit_height, 10)
+            self.fruit_x = random.randrange(0, WIDTH - self.fruit_width, 20)
+            self.fruit_y = random.randrange(0, HEIGHT - self.fruit_height, 20)
             if self.fruit_x != self.snake_x or self.fruit_y != self.snake_y:
                 break
 
@@ -132,18 +132,18 @@ class s_env:
 
         self.fruit_collid()
             
-        if action == 0 and self.dx != -10:
-            self.dx = 10
+        if action == 0 and self.dx != -20:
+            self.dx = 20
             self.dy = 0
-        elif action == 1 and self.dx != 10:
-            self.dx = -10
+        elif action == 1 and self.dx != 20:
+            self.dx = -20
             self.dy = 0
-        elif action == 2 and self.dy != -10:
+        elif action == 2 and self.dy != -20:
             self.dx = 0
-            self.dy = 10
-        elif action == 3 and self.dy != 10:
+            self.dy = 20
+        elif action == 3 and self.dy != 20:
             self.dx = 0
-            self.dy = -10
+            self.dy = -20
 
         self.current_steps += 1
                 

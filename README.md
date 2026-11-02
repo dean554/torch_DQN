@@ -103,8 +103,7 @@ The `s_env` class implements a Pygame Snake game with the following mechanics:
 
 | Setting | Value |
 |---------|-------|
-| Network (`dqn.py`) | `12 -> 256 -> 256 -> 4` (ReLU) |
-| Network (`dqn_plot.py`) | `12 -> 128 -> 128 -> 4` (ReLU) |
+| Network (`dqn.py`, `dqn_plot.py`) | `12 -> 256 -> 256 -> 4` (ReLU) |
 | Loss / optimizer | Huber (SmoothL1) loss, AdamW (`LR = 1e-3`) |
 | Discount (`GAMMA`) | `0.99` |
 | Batch size | `128` |
